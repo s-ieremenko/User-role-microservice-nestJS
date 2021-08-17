@@ -35,8 +35,8 @@ export class RoleService {
     }
     const role: Role = this.roleRepository.create({
       name: createRoleDto.name,
+      permissions,
     });
-    role.permissions = permissions;
     await this.roleRepository.save(role);
   }
 
@@ -50,9 +50,14 @@ export class RoleService {
     if (!role || !permission) {
       throw new Error('Incorrect data');
     }
-    if (role.permissions.includes(permission)) {
-      throw new Error('Permission already exists');
+    if (role.permissions) {
+      if (role.permissions.includes(permission)) {
+        throw new Error('Permission already exists');
+      }
+      role.permissions.push(permission);
+    } else {
+      role.permissions = [permission];
     }
-    role.permissions.push(permission);
+    this.roleRepository.save(role);
   }
 }
