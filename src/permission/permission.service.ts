@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import PERMISSIONS from 'src/common/enums';
 import { Repository } from 'typeorm';
+
+import PERMISSIONS from 'src/common/enums';
 import { Permission } from './permission.entity';
 
 @Injectable()
@@ -11,13 +12,13 @@ export class PermissionService {
     private readonly permissionRepository: Repository<Permission>,
   ) {}
   async getPermissions(): Promise<Permission[]> {
-    const permissionIds = await this.permissionRepository.find({
+    const permissionWithUuids = await this.permissionRepository.find({
       select: ['uuid', 'name'],
     });
-    if (!permissionIds.length) {
+    if (!permissionWithUuids.length) {
       throw new Error('No permissions were found');
     }
-    return permissionIds;
+    return permissionWithUuids;
   }
 
   async createPermission(name: PERMISSIONS): Promise<void> {

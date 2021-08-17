@@ -1,5 +1,6 @@
-import { Role } from 'src/role/role.entity';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+import { Role } from 'src/role/role.entity';
 import PERMISSIONS from '../common/enums';
 
 @Entity()

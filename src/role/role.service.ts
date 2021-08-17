@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Permission } from 'src/permission/permission.entity';
 import { In, Repository } from 'typeorm';
+
+import { Permission } from 'src/permission/permission.entity';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './role.entity';
@@ -50,14 +51,10 @@ export class RoleService {
     if (!role || !permission) {
       throw new Error('Incorrect data');
     }
-    if (role.permissions) {
-      if (role.permissions.includes(permission)) {
-        throw new Error('Permission already exists');
-      }
-      role.permissions.push(permission);
-    } else {
-      role.permissions = [permission];
+    if (role.permissions.includes(permission)) {
+      throw new Error('Permission already exists');
     }
+    role.permissions.push(permission);
     this.roleRepository.save(role);
   }
 }

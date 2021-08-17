@@ -4,6 +4,7 @@ import { Delete } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { Response } from 'express';
+
 import PERMISSIONS from 'src/common/enums';
 import { Permission } from './permission.entity';
 import { PermissionService } from './permission.service';
@@ -11,12 +12,13 @@ import { PermissionService } from './permission.service';
 @Controller('permission')
 export class PermissionController {
   constructor(private permissionService: PermissionService) {}
+
   @Get()
   async read(@Res() res: Response): Promise<void> {
     try {
-      const permissionIds: Permission[] =
+      const permissionWithUuids: Permission[] =
         await this.permissionService.getPermissions();
-      res.status(HttpStatus.OK).send(permissionIds);
+      res.status(HttpStatus.OK).send(permissionWithUuids);
     } catch (error: any) {
       res.status(HttpStatus.BAD_REQUEST).send(error.message);
     }
