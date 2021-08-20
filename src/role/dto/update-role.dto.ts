@@ -1,4 +1,4 @@
 export class UpdateRoleDto {
-  roleUuid: string;
-  permissionUuid: string;
+  readonly roleUuid: string;
+  readonly permissionUuid: string;
 }

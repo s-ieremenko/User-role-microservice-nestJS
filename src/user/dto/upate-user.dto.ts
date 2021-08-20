@@ -1,4 +1,4 @@
 export class UpdateUserDto {
-  userUuid: string;
-  roleUuid: string;
+  readonly userUuid: string;
+  readonly roleUuid: string;
 }

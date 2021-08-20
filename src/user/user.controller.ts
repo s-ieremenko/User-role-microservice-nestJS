@@ -12,7 +12,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private userService: UserService) {}
   @Get()
-  async read(@Res() res: Response) {
+  async read(@Res() res: Response): Promise<void> {
     try {
       const users: User[] = await this.userService.getUsers();
       res.status(HttpStatus.OK).send(users);

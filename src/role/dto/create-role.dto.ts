@@ -1,4 +1,4 @@
 export class CreateRoleDto {
-  name: string;
-  permissionUuids: string[];
+  readonly name: string;
+  readonly permissionUuids: string[];
 }
