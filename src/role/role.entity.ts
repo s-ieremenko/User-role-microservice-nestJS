@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Permission } from 'src/permission/permission.entity';
-import { User } from 'src/user/user.entity';
+import { Permission } from '../permission/permission.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Role {

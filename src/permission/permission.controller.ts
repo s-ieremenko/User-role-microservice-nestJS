@@ -5,7 +5,7 @@ import { Get } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { Response } from 'express';
 
-import PERMISSIONS from 'src/common/enums';
+import PERMISSIONS from '../common/enums';
 import { Permission } from './permission.entity';
 import { PermissionService } from './permission.service';
 

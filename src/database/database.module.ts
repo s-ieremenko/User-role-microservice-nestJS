@@ -7,10 +7,10 @@ import {
   passwordDB,
   portDB,
   typeDB,
-} from 'src/common/constants';
-import { Permission } from 'src/permission/permission.entity';
-import { Role } from 'src/role/role.entity';
-import { User } from 'src/user/user.entity';
+} from '../common/constants';
+import { Permission } from '../permission/permission.entity';
+import { Role } from '../role/role.entity';
+import { User } from '../user/user.entity';
 
 @Module({
   imports: [
