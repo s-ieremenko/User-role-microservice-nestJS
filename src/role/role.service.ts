@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { Permission } from '../permission/permission.entity';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './role.entity';
 
 @Injectable()
@@ -20,7 +23,7 @@ export class RoleService {
       relations: ['permissions'],
     });
     if (!roles.length) {
-      throw new Error('No roles were found');
+      throw new NotFoundException('No roles were found');
     }
     return roles;
   }
@@ -31,28 +34,43 @@ export class RoleService {
         uuid: In(createRoleDto.permissionUuids),
       },
     });
-    if (!permissions.length) {
-      throw new Error('Wrong permissionUuids');
+    if (!permissions || !permissions.length) {
+      throw new BadRequestException('Wrong permissionUuids');
+    }
+    const existingRole: Role = await this.roleRepository.findOne({
+      where: { name: createRoleDto.name },
+    });
+    if (existingRole) {
+      throw new BadRequestException('Role already exists');
     }
     const role: Role = this.roleRepository.create({
-      name: createRoleDto.name,
+      ...createRoleDto,
       permissions,
     });
     await this.roleRepository.save(role);
   }
 
-  async addPermissionToRole(updateRoleDto: UpdateRoleDto): Promise<void> {
+  async addPermissionToRole(
+    roleUuid: string,
+    permissionUuid: string,
+  ): Promise<void> {
     const role: Role = await this.roleRepository.findOne({
-      where: { uuid: updateRoleDto.roleUuid },
+      where: { uuid: roleUuid },
+      relations: ['permissions'],
     });
+
     const permission: Permission = await this.permissionRepository.findOne({
-      where: { uuid: updateRoleDto.permissionUuid },
+      where: { uuid: permissionUuid },
     });
     if (!role || !permission) {
-      throw new Error('Incorrect data');
+      throw new BadRequestException('Incorrect data');
     }
-    if (role.permissions.includes(permission)) {
-      throw new Error('Permission already exists');
+    const existingPermission = role.permissions.find(
+      (perm) => perm.name === permission.name,
+    );
+
+    if (existingPermission) {
+      throw new BadRequestException('Permission already exists');
     }
     role.permissions.push(permission);
     await this.roleRepository.save(role);

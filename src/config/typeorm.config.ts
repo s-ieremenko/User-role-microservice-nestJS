@@ -3,9 +3,6 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
-import { Permission } from 'src/permission/permission.entity';
-import { Role } from 'src/role/role.entity';
-import { User } from 'src/user/user.entity';
 
 export default class TypeOrmConfig {
   static getOrmConfig(configService: ConfigService): TypeOrmModuleOptions {

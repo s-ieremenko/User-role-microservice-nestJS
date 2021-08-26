@@ -30,7 +30,6 @@ export class UserService {
   }
 
   async getOneUser(userUuid: string): Promise<User> {
-    console.log('userUuid', userUuid);
     const user: User = await this.userRepository.findOne({
       where: {
         uuid: userUuid,
@@ -62,6 +61,7 @@ export class UserService {
     const user: User = this.userRepository.create(createUserDto);
     this.userRepository.save(user);
   }
+
   async addRoleToUser(
     userUuid: string,
     roleUuid: string,

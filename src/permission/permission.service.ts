@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -16,7 +20,7 @@ export class PermissionService {
       select: ['uuid', 'name'],
     });
     if (!permissionWithUuids.length) {
-      throw new Error('No permissions were found');
+      throw new NotFoundException('No permissions were found');
     }
     return permissionWithUuids;
   }
@@ -30,7 +34,7 @@ export class PermissionService {
       },
     );
     if (permissionExist) {
-      throw new Error('Permission already exists');
+      throw new BadRequestException('Permission already exists');
     }
     const permission = this.permissionRepository.create({
       name,
@@ -38,9 +42,11 @@ export class PermissionService {
     await this.permissionRepository.save(permission);
   }
   async deletePermission(permissionUuid: string): Promise<void> {
-    const permission = await this.permissionRepository.findOne(permissionUuid);
+    const permission = await this.permissionRepository.findOne({
+      where: { uuid: permissionUuid },
+    });
     if (!permission) {
-      throw new Error('Wrong permission uuid');
+      throw new BadRequestException('Wrong permission uuid');
     }
     await this.permissionRepository.remove(permission);
   }

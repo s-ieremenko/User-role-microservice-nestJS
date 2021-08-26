@@ -1,13 +1,12 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
-export class CreateUserDto {
+export class UpdateUserDto {
   @IsString()
   readonly name: string;
 
   @IsString()
   readonly email: string;
 
-  @IsUUID('4', { each: true })
   @IsString()
   @IsOptional()
   readonly roleUuid?: string | null = null;
