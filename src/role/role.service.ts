@@ -55,6 +55,6 @@ export class RoleService {
       throw new Error('Permission already exists');
     }
     role.permissions.push(permission);
-    this.roleRepository.save(role);
+    await this.roleRepository.save(role);
   }
 }

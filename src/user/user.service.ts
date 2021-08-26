@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 
 import { Role } from '../role/role.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/upate-user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -20,26 +24,30 @@ export class UserService {
       relations: ['role'],
     });
     if (!users.length) {
-      throw new Error('No users were found');
+      throw new NotFoundException('No users were found');
     }
     return users;
   }
 
-  async getUser(userUuid: string): Promise<User> {
-    const user: User = await this.userRepository.findOne(userUuid, {
+  async getOneUser(userUuid: string): Promise<User> {
+    console.log('userUuid', userUuid);
+    const user: User = await this.userRepository.findOne({
+      where: {
+        uuid: userUuid,
+      },
       relations: ['role'],
     });
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
     return user;
   }
 
-  async isAdmin(user: User): Promise<boolean> {
+  async isAdmin(user: User): Promise<string> {
     if (user.role.name !== 'Admin') {
-      return false;
+      throw new ForbiddenException('Not admin');
     }
-    return true;
+    return user.role.name;
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<void> {
@@ -49,25 +57,20 @@ export class UserService {
       },
     });
     if (userExist) {
-      throw new Error('User already exists');
+      throw new BadRequestException('User already exists');
     }
-    const user: User = this.userRepository.create({
-      name: createUserDto.name,
-      email: createUserDto.email,
-    });
+    const user: User = this.userRepository.create(createUserDto);
     this.userRepository.save(user);
   }
-  async addRoleForUser(updateUserDto: UpdateUserDto): Promise<void> {
-    const user: User = await this.userRepository.findOne(
-      updateUserDto.userUuid,
-    );
-    const role: Role = await this.roleRepository.findOne(
-      updateUserDto.roleUuid,
-    );
-    if (!user || !role) {
-      throw new Error('User or role not found');
+  async addRoleToUser(
+    userUuid: string,
+    roleUuid: string,
+  ): Promise<UpdateResult> {
+    if (!userUuid) {
+      throw new BadRequestException('UserUuid is required');
     }
-    user.role = role;
-    this.userRepository.save(user);
+    return await this.userRepository.update(userUuid, {
+      roleUuid,
+    });
   }
 }

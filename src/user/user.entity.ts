@@ -13,6 +13,9 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
+  @Column({ nullable: true })
+  roleUuid?: string;
+
   @ManyToOne(() => Role, (role) => role.users)
   role: Role;
 }
